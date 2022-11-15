@@ -1,0 +1,49 @@
+SELECT PRO.codprod                  AS PRODUTO,
+       Upper(PRO.descrprod)         AS DESCRICAO,
+       (SELECT TOP 1 Format(vlrvenda, 'C', 'pt-br')
+        FROM   tgfexc EXCT1
+               INNER JOIN tgftab TAB1
+                       ON EXCT1.nutab = TAB1.nutab
+        WHERE  TAB1.codtab = 0
+               AND EXCT1.codprod = EXC.codprod
+        GROUP  BY exct1.codprod,
+                  exct1.vlrvenda,
+                  exct1.nutab
+        ORDER  BY exct1.nutab DESC) AS 'TAB-01',
+       (SELECT TOP 1 Format(vlrvenda, 'C', 'pt-br')
+        FROM   tgfexc EXCT1
+               INNER JOIN tgftab TAB1
+                       ON EXCT1.nutab = TAB1.nutab
+        WHERE  TAB1.codtab = 2
+               AND EXCT1.codprod = EXC.codprod
+        GROUP  BY exct1.codprod,
+                  exct1.vlrvenda,
+                  exct1.nutab
+        ORDER  BY exct1.nutab DESC) AS 'TAB-02',
+       (SELECT TOP 1 Format(vlrvenda, 'C', 'pt-br')
+        FROM   tgfexc EXCT1
+               INNER JOIN tgftab TAB1
+                       ON EXCT1.nutab = TAB1.nutab
+        WHERE  TAB1.codtab = 3
+               AND EXCT1.codprod = EXC.codprod
+        GROUP  BY exct1.codprod,
+                  exct1.vlrvenda,
+                  exct1.nutab
+        ORDER  BY exct1.nutab DESC) AS 'TAB-03',
+       (SELECT TOP 1 Format(vlrvenda, 'C', 'pt-br')
+        FROM   tgfexc EXCT1
+               INNER JOIN tgftab TAB1
+                       ON EXCT1.nutab = TAB1.nutab
+        WHERE  TAB1.codtab = 4
+               AND EXCT1.codprod = EXC.codprod
+        GROUP  BY exct1.codprod,
+                  exct1.vlrvenda,
+                  exct1.nutab
+        ORDER  BY exct1.nutab DESC) AS 'TAB-04'
+FROM   tgfpro PRO
+       INNER JOIN tgfexc EXC
+               ON PRO.codprod = EXC.codprod
+WHERE  EXC.nutab = (SELECT Max(nutab)
+                    FROM   tgfexc EXC2
+                    WHERE  EXC2.codprod = EXC.codprod)
+-- AND PRO.CODPROD = 2090  -- PARÂMETRO PARA PESQUISA POR PRODUTO
